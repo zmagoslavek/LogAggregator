@@ -1,0 +1,10 @@
+{
+  "development": {
+    "username": "root",
+    "password": "1Amsterdam.",
+    "database": "logagg",
+    "host": "127.0.0.1",
+    "port":"6000",
+    "dialect": "mysql"
+  }
+}
