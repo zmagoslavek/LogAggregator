@@ -4,13 +4,19 @@ const User = require('../models/User');
 class AdminController {
   static async registerUser(req, res) {
     try {
-      const { username, password, role } = req.body;
-
-      // Check if the user making the request is an admin
-      if (req.user.role !== 'ADMIN') {
-        return res.status(403).json({ error: 'Only admin can register new users' });
+      
+      if (!req.body.username) {
+        return res.json({error:"No username"});
       }
-
+      if (!req.body.password) {
+        return res.json({error:"No password"});
+      }
+      if (!req.body.role) {
+        return res.json({error:"No role"});
+      }
+      const username = req.body.username;
+      const password = req.body.password;
+      const role = req.body.role;
       // Hash the password
       const hashedPassword = await bcrypt.hash(password, 10);
 

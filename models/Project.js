@@ -19,7 +19,7 @@ Project.init(
       type: DataTypes.INTEGER,
       allowNull: false,
       references: {
-        model: User,
+        model: 'User',
         key: 'idUsers',
       },
     },
@@ -31,5 +31,7 @@ Project.init(
     timestamps: false,
   }
 );
+
+Project.belongsTo(User, { foreignKey: 'userId' });
 
 module.exports = Project;

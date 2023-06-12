@@ -6,5 +6,6 @@
     "host": "127.0.0.1",
     "port":"6000",
     "dialect": "mysql"
-  }
+  },
+  "secret_key":"BzGTs0sXdoIRwCz3!JeLx4o68Y$v*Qk"
 }

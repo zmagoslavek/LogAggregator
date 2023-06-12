@@ -1,11 +1,15 @@
 // userRouter.js
 const express = require('express');
+const passport = require('passport');
 const userRouter = express.Router();
+const userController = require('../controllers/UserController');
 
 // Define user routes
-userRouter.get('/', (req, res) => {
-  // Handle user route logic
-});
+userRouter.post('/add-project', /*passport.authenticate('local'),*/userController.addProject);
+
+userRouter.get('/projects/', /*passport.authenticate('local'),*/userController.getAllUserProjects);
+
+//userRouter.get('/projects/:projectId', passport.authenticate('local'),userController.getProjectById);
 
 // ...
 

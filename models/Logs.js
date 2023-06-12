@@ -1,10 +1,10 @@
 const { Model, DataTypes } = require('sequelize');
 const sequelize = require('../config/database');
-const Project = require('./Project');
+const Project = require('../models/Projects');
 
-class Logs extends Model {}
+class Log extends Model {}
 
-Logs.init(
+Log.init(
   {
     idLogs: {
       type: DataTypes.INTEGER,
@@ -49,4 +49,4 @@ Logs.init(
   }
 );
 
-module.exports = Logs;
+module.exports = Log;
