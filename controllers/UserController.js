@@ -1,3 +1,4 @@
+const Log = require('../models/Log');
 const Project = require('../models/Project')
 const User = require('../models/User')
 
@@ -17,7 +18,7 @@ class UserController {
         }
   
         if (!userId) {
-          return res.status(400).json({ error: 'User ID is required' });
+          return res.status(400).json({ error: 'User is required' });
         }
   
         // Create a new project using the Project model
@@ -41,16 +42,18 @@ class UserController {
         try {
           // Retrieve the user ID from the authenticated user in the session
           const userId = req.user.idUsers;
-    
-          // Find the user and include their associated projects
+
+          if (!userId) {
+            return res.status(400).json({ error: 'User is required' });
+          }
+
           const projects = await Project.findAll({
             where: {
-                userId: 2
-              }
+                userId: userId,
+            },
+            include:Log
           });
-    
-    
-          // Extract the projects from the user object
+          
           
     
           res.status(200).json({
@@ -62,6 +65,35 @@ class UserController {
           res.status(500).json({ error: 'Internal Server Error' });
         }
     }
+
+    static async getProjectById(req, res) {
+        try {
+          // Retrieve the user ID from the authenticated user in the session
+          const userId = req.user.idUsers;
+
+          if (!userId) {
+            return res.status(400).json({ error: 'User is required' });
+          }
+    
+          // Find the user and include their associated projects
+          const projects = await Project.findAll({
+            where: {
+                userId: userId,
+                idProjects: req.params.projectId
+            },
+            include: Log
+          });
+    
+          res.status(200).json({
+            message: 'User projects retrieved successfully',
+            projects
+          });
+        } catch (error) {
+          console.error(error);
+          res.status(500).json({ error: 'Internal Server Error' });
+        }
+    }
+    
 }
 
 module.exports = UserController;

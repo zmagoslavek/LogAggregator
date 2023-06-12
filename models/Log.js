@@ -1,6 +1,6 @@
 const { Model, DataTypes } = require('sequelize');
 const sequelize = require('../config/database');
-const Project = require('../models/Projects');
+const Project = require('./Project');
 
 class Log extends Model {}
 
@@ -10,10 +10,6 @@ Log.init(
       type: DataTypes.INTEGER,
       primaryKey: true,
       autoIncrement: true,
-    },
-    timestamp: {
-      type: DataTypes.DATE,
-      allowNull: false,
     },
     severity_level: {
       type: DataTypes.ENUM(
@@ -45,8 +41,13 @@ Log.init(
     sequelize,
     modelName: 'Logs',
     tableName: 'logs',
-    timestamps: false,
+    timestamps: true,
+    updatedAt: false,
+    createdAt: 'created_at'
   }
 );
 
 module.exports = Log;
+
+Project.hasMany(Log, { foreignKey: 'projectId' });
+Log.belongsTo(Project,{ foreignKey: 'projectId' });

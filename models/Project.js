@@ -32,6 +32,10 @@ Project.init(
   }
 );
 
-Project.belongsTo(User, { foreignKey: 'userId' });
+
 
 module.exports = Project;
+
+
+User.hasMany(Project, { foreignKey: 'userId' });
+Project.belongsTo(User, { foreignKey: 'userId' });
