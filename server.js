@@ -8,6 +8,7 @@ const passport = require('passport')
 const LocalStrategy = require('passport-local').Strategy;
 const User = require('./models/User');
 const bcrypt = require('bcrypt')
+const cors = require('cors');
 
 passport.use(
   new LocalStrategy(async (username, password, done) => {
@@ -53,6 +54,8 @@ app.use(
     saveUninitialized: false
   })
 );
+
+app.use(cors());
 app.use(express.json())
 app.use(passport.initialize());
 app.use(passport.session());

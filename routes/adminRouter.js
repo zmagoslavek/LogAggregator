@@ -8,7 +8,7 @@ const { checkRole } = require('../middleware/roleMiddleware');
 
 
 // Define admin routes
-adminRouter.post('/register', checkRole("ADMIN"),AdminController.registerUser);
+adminRouter.post('/register', /*checkRole("ADMIN"),*/AdminController.registerUser);
 
 // ...
 
