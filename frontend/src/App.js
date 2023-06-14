@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Login } from './Pages/Login';
 import { Admin } from './Pages/Admin';
 import { User } from './Pages/User';
+import { BackgroundGradient } from './Pages/BackgroundGradient'
 import 'bootstrap/dist/css/bootstrap.min.css';
 import "./App.css"
 
@@ -40,6 +41,7 @@ function App() {
       ) : (
         <User/>
       )}
+      <BackgroundGradient />
     </div>
   );
 }

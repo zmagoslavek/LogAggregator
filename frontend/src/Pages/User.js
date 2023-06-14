@@ -1,50 +1,73 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { saveAs } from 'file-saver';
+import * as XLSX from 'xlsx';
+
 
 export function User() {
   const [showForm, setAddProjectShowForm] = useState(false);
   const [projectName, setProjectName] = useState('');
-  const [showProjects, setShowProjects] = useState('');
+  const [showProjects, setShowProjects] = useState(false);
   const [projects, setProjects] = useState([]);
   const [selectedProject, setSelectedProject] = useState(null);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [sortOrder, setSortOrder] = useState('asc');
+  const [sortedLogs, setSortedLogs] = useState([]);
+  const [sortColumn, setSortColumn] = useState(null);
+  const [logs, setLogs] = useState([]);
+
+  const handleSearchInputChange = (e) => {
+    setSearchQuery(e.target.value);
+  };
 
   const handleAddProject = () => {
     setAddProjectShowForm(true);
     setShowProjects(false);
-    setSelectedProject(null); 
+    setSelectedProject(null);
+  };
+  
+
+  const exportToExcel = () => {
+    const logsData = sortedLogs.map((log) => ({
+      'Log ID': log.idLogs,
+      'Severity Level': log.severity_level,
+      'Created At': log.created_at,
+      'Message': log.info
+    }));
+
+    const worksheet = XLSX.utils.json_to_sheet(logsData);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, 'Logs');
+    const excelBuffer = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
+    const data = new Blob([excelBuffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+    saveAs(data, 'logs.xlsx');
   };
 
   const handleAddProjectSubmit = (e) => {
     e.preventDefault();
-    // Logic for submitting the form and adding the project
     const token = localStorage.getItem('token');
 
-    // Perform API call to the users/add-project route to add a new project
     fetch('http://localhost:3000/users/add-project', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`
       },
-      body: JSON.stringify({ name:projectName}),
+      body: JSON.stringify({ name: projectName }),
     })
       .then((response) => response.json())
       .then((data) => {
-        // Handle the response from the API
-        console.log(data);
-        // Clear the form fields
         setProjectName('');
         setAddProjectShowForm(false);
       })
       .catch((error) => {
-        // Handle any errors that occurred during the API call
         console.error(error);
       });
   };
+
   const handleViewProjects = () => {
-    // Fetch user's projects from the server
     setAddProjectShowForm(false);
     const token = localStorage.getItem('token');
-    fetch('http://localhost:3000/users/projects',{
+    fetch('http://localhost:3000/users/projects', {
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`
@@ -53,18 +76,65 @@ export function User() {
       .then((response) => response.json())
       .then((data) => {
         setProjects(data);
-        setShowProjects(true); // Update the projects state with the fetched data
+        setShowProjects(true);
       })
       .catch((error) => {
         console.error(error);
       });
   };
+
   const handleViewProjectDetails = () => {
     setAddProjectShowForm(true);
   };
+
   const handleProjectClick = (project) => {
     setSelectedProject(project);
+    setSortedLogs(project.Logs);
   };
+
+  const handleSortLogs = (column) => {
+    if (sortColumn === column) {
+      setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
+    } else {
+      setSortOrder('asc');
+      setSortColumn(column);
+    }
+  };
+
+  const sortLogs = () => {
+    let sortedData = [...sortedLogs];
+
+    if (sortColumn === 'severity_level') {
+      sortedData.sort((a, b) => {
+        const aValue = a.severity_level.toLowerCase();
+        const bValue = b.severity_level.toLowerCase();
+        return sortOrder === 'asc' ? aValue.localeCompare(bValue) : bValue.localeCompare(aValue);
+      });
+    }
+
+    if (sortColumn === 'createdAt') {
+      sortedData.sort((a, b) => {
+        const aValue = new Date(a.createdAt);
+        const bValue = new Date(b.createdAt);
+        return sortOrder === 'asc' ? aValue - bValue : bValue - aValue;
+      });
+    }
+
+    if (sortColumn === 'idLogs') {
+      sortedData.sort((a, b) => {
+        const aValue = parseInt(a.idLogs);
+        const bValue = parseInt(b.idLogs);
+        return sortOrder === 'asc' ? aValue - bValue : bValue - aValue;
+      });
+    }
+
+    setSortedLogs(sortedData);
+  };
+
+  useEffect(() => {
+    sortLogs();
+  }, [sortOrder, sortColumn]);
+
   return (
     <div>
       <h1 className="text-center">Welcome to User Page</h1>
@@ -104,60 +174,77 @@ export function User() {
             </div>
           </form>
         </div>
-        )}
-    {/* Table to display user's projects */}
-    {showProjects && (
-      <div className="User-form-container">
-      <h3>Projects</h3>
-      {projects.projects.length > 0 && (
-        <table className="table mt-3">
-          <thead>
-            <tr>
-              <th>Project ID</th>
-              <th>Project Name</th>
-              <th>User ID</th>
-            </tr>
-          </thead>
-          <tbody>
-            {projects.projects.map((project) => (
-              <tr key={project.idProjects} onClick={() => handleProjectClick(project)} className="clickable-row">
-                <td>{project.idProjects}</td>
-                <td>{project.name}</td>
-                <td>{project.userId}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
       )}
-    </div>
-    )}
-    {selectedProject && (
-        <div>
-          <h3>Logs for Project: {selectedProject.name}</h3>
-          {selectedProject.Logs.length > 0 ? (
-            <table className="table mt-3">
+      {showProjects && (
+        <div className="User-form-container">
+          <h3>Projects</h3>
+          {projects.projects.length > 0 && (
+            <table className="table mt-3 center">
               <thead>
                 <tr>
-                  <th>Log ID</th>
-                  <th>Severity Level</th>
-                  <th>Info</th>
-                  <th>Created At</th>
+                  <th>Project ID</th>
+                  <th>Project Name</th>
                 </tr>
               </thead>
               <tbody>
-                {selectedProject.Logs.map((log) => (
-                  <tr key={log.idLogs}>
-                    <td>{log.idLogs}</td>
-                    <td>{log.severity_level}</td>
-                    <td>{log.info}</td>
-                    <td>{log.created_at}</td>
+                {projects.projects.map((project) => (
+                  <tr
+                    key={project.idProjects}
+                    onClick={() => handleProjectClick(project)}
+                    className="clickable-row"
+                  >
+                    <td>{project.idProjects}</td>
+                    <td>{project.name}</td>
                   </tr>
                 ))}
               </tbody>
             </table>
-          ) : (
-            <p>No logs available for this project.</p>
           )}
+        </div>
+      )}
+      {selectedProject && (
+        <div>
+          <div className="User-form-container">
+            <input
+              type="text"
+              id="myInput"
+              placeholder="Search..."
+              value={searchQuery}
+              onChange={handleSearchInputChange}
+            />
+            <button className="btn btn-primary float-right" onClick={exportToExcel}>
+                Export to Excel
+              </button>
+          <div>
+            <h3>Logs for Project: {selectedProject.name}</h3>
+            {sortedLogs.length > 0 ? (
+              <table className="table mt-3 center">
+                <thead>
+                  <tr>
+                    <th onClick={() => handleSortLogs('idLogs')}>Log ID</th>
+                    <th onClick={() => handleSortLogs('severity_level')}>Severity Level</th>
+                    <th>Info</th>
+                    <th onClick={() => handleSortLogs('createdAt')}>Created At</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {sortedLogs
+                    .filter((log) => log.info.toUpperCase().includes(searchQuery.toUpperCase()))
+                    .map((log) => (
+                      <tr key={log.idLogs}>
+                        <td>{log.idLogs}</td>
+                        <td>{log.severity_level}</td>
+                        <td>{log.info}</td>
+                        <td>{log.created_at}</td>
+                      </tr>
+                    ))}
+                </tbody>
+              </table>
+            ) : (
+              <p>No logs available for this project.</p>
+            )}
+          </div>
+          </div>
         </div>
       )}
     </div>
