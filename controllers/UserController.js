@@ -10,7 +10,7 @@ class UserController {
         // Extract the project details from the request body
         const name = req.body.name;
         // Retrieve the user ID from the authenticated user in the session
-        const userId = req.user.idUsers;
+        const userId = req.user.id;
   
         // Check if the name and user are defined
         if (!name) {
@@ -41,7 +41,7 @@ class UserController {
     static async getAllUserProjects(req, res) {
         try {
           // Retrieve the user ID from the authenticated user in the session
-          const userId = req.user.idUsers;
+          const userId = req.user.id;
 
           if (!userId) {
             return res.status(400).json({ error: 'User is required' });

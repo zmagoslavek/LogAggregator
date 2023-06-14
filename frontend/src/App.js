@@ -11,9 +11,8 @@ function App() {
 
   // Handle login event
   const handleLogin = (res) => {
-    const idUsers = res.user.idUsers;
-    const username = res.user.username;
-    const role = res.user.role;
+    
+    const role = res.role;
     
 
   // Perform authentication logic here and set isLoggedIn and isAdmin accordingly

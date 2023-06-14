@@ -3,53 +3,43 @@ const app = express();
 const port = 3000; // You can change the port number to your preference
 const mainRouter = require('./routes/mainRouter');
 const session = require('express-session');
-const config = require('./config/config.json')
-const passport = require('passport')
-const LocalStrategy = require('passport-local').Strategy;
+const config = require('./config/config.json');
+const passport = require('passport');
+const JwtStrategy = require('passport-jwt').Strategy;
+const ExtractJwt = require('passport-jwt').ExtractJwt;
 const User = require('./models/User');
-const bcrypt = require('bcrypt')
 const cors = require('cors');
+const crypto = require('crypto');
+const secret = crypto.randomBytes(32).toString('hex');
+
+
 
 passport.use(
-  new LocalStrategy(async (username, password, done) => {
-    try {
-      // Find the user by username
-      const user = await User.findOne({ where: { username } });
+  new JwtStrategy(
+    {
+      jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+      secretOrKey: config.jwt_secret_key
+    },
+    async (jwtPayload, done) => {
+      try {
+        // Find the user by ID
+        const user = await User.findByPk(jwtPayload.id);
 
-      if (!user) {
-        return done(null, false, { message: 'Incorrect username or password' });
+        if (!user) {
+          return done(null, false, { message: 'Invalid token' });
+        }
+
+        return done(null, user);
+      } catch (error) {
+        return done(error);
       }
-
-      // Compare the password
-      const isMatch = await bcrypt.compare(password, user.password);
-
-      if (!isMatch) {
-        return done(null, false, { message: 'Incorrect username or password' });
-      }
-
-      return done(null, user);
-    } catch (error) {
-      return done(error);
     }
-  })
+  )
 );
-
-passport.serializeUser((user, done) => {
-  done(null, user.idUsers);
-});
-
-passport.deserializeUser(async (id, done) => {
-  try {
-    const user = await User.findByPk(id);
-    done(null, user);
-  } catch (error) {
-    done(error);
-  }
-});
 
 app.use(
   session({
-    secret: config.secret_key,
+    secret: secret,
     resave: false,
     saveUninitialized: false
   })

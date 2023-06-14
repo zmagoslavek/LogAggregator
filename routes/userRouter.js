@@ -4,15 +4,15 @@ const passport = require('passport');
 const userRouter = express.Router();
 const userController = require('../controllers/UserController');
 const LogController = require('../controllers/LogController');
-
+const validateToken = require('../middleware/validateToken');
 // Define user routes
-userRouter.post('/add-project', /*passport.authenticate('local'),*/userController.addProject);
+userRouter.post('/add-project',validateToken,userController.addProject);
 
-userRouter.get('/projects/', /*passport.authenticate('local'),*/userController.getAllUserProjects);
+userRouter.get('/projects/',validateToken,userController.getAllUserProjects);
 
-userRouter.get('/projects/:projectId', /*passport.authenticate('local'),*/userController.getProjectById);
+userRouter.get('/projects/:projectId',validateToken,userController.getProjectById);
 
-userRouter.post('/projects/:projectId/logs',LogController.addLog);
-// ...
+userRouter.post('/projects/:projectId/logs',validateToken, LogController.addLog);
+
 
 module.exports = userRouter;

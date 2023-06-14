@@ -7,5 +7,5 @@
     "port":"6000",
     "dialect": "mysql"
   },
-  "secret_key":"BzGTs0sXdoIRwCz3!JeLx4o68Y$v*Qk"
+  "jwt_secret_key":"BzGTs0sXdoIRwCz3!JeLx4o68Y$v*Qk"
 }

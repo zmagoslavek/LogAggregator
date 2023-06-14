@@ -1,15 +1,13 @@
 // adminRouter.js
-const bodyParser = require('body-parser')
 const express = require('express');
 const adminRouter = express.Router();
 const AdminController = require('../controllers/AdminController');
-const passport = require('passport');
-const { checkRole } = require('../middleware/roleMiddleware');
-
+const checkRole = require('../middleware/checkRole');
+const validateToken = require('../middleware/validateToken')
 
 // Define admin routes
-adminRouter.post('/register', /*checkRole("ADMIN"),*/AdminController.registerUser);
+adminRouter.post('/register',validateToken,checkRole("ADMIN"),AdminController.registerUser);
 
-// ...
+
 
 module.exports = adminRouter;

@@ -48,6 +48,27 @@
   width: 100vw;
   height: 100vh;
 }
+.User-nav-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100vw;
+  height: 10vh;
+}
+.Add-user-form-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100vw;
+  height: 30vh;
+}
+.User-projects-table{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 50vw;
+  height: 10vh;
+}
 
 .Auth-form {
   width: 420px;
@@ -75,4 +96,8 @@ label {
   font-size: 14px;
   font-weight: 600;
   color: rgb(34, 34, 34);
+}
+
+.clickable-row:hover {
+  cursor: pointer;
 }

@@ -20,6 +20,7 @@ export const Login = ({ onLogin }) => {
         // Login successful, redirect or perform any other actions
         const data = await response.json();
         console.log('Login successful');
+        localStorage.setItem('token', data.token);
         onLogin(data);
       } else {
         // Login failed, display error message or handle accordingly

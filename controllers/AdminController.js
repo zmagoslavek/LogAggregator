@@ -11,6 +11,10 @@ class AdminController {
       if (!req.body.password) {
         return res.json({error:"No password"});
       }
+      if (!req.body.role) {
+        return res.json({error:"No role"});
+      }
+      
       
       const username = req.body.username;
       const password = req.body.password;
@@ -19,7 +23,7 @@ class AdminController {
       const hashedPassword = await bcrypt.hash(password, 10);
 
       // Create the new user
-      const user = await User.create({ username, password: hashedPassword, role:'USER' });
+      const user = await User.create({ username, password: hashedPassword, role:role });
 
       res.json(user);
     } catch (error) {
