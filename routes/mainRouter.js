@@ -7,7 +7,7 @@ const adminRouter = require('./adminRouter');
 const authRouter = require('./authRouter');
 
 
-// Add routes from other routers to the main router
+//Routes from other routers to the main router
 mainRouter.use('/auth',authRouter);
 mainRouter.use('/users', userRouter);
 mainRouter.use('/admin', adminRouter);

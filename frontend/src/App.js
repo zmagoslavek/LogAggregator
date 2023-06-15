@@ -17,7 +17,7 @@ function App() {
     
 
   // Perform authentication logic here and set isLoggedIn and isAdmin accordingly
-  // For demonstration purposes, assume successful login and user role detection
+  
     setIsLoggedIn(true);
     if(role == 'ADMIN'){
       setIsAdmin(true);

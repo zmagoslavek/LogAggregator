@@ -1,4 +1,4 @@
-const Log = require('../models/Log'); // Replace with your Log and Project model imports
+const Log = require('../models/Log');
 
 class LogController {
   static async addLog(req, res) {

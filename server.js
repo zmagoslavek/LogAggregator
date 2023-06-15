@@ -1,6 +1,6 @@
 const express = require('express');
 const app = express();
-const port = 3000; // You can change the port number to your preference
+const port = 3000;
 const mainRouter = require('./routes/mainRouter');
 const session = require('express-session');
 const config = require('./config/config.json');

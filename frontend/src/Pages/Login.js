@@ -17,13 +17,13 @@ export const Login = ({ onLogin }) => {
       });
 
       if (response.ok) {
-        // Login successful, redirect or perform any other actions
+        // Login successful
         const data = await response.json();
         console.log('Login successful');
         localStorage.setItem('token', data.token);
         onLogin(data);
       } else {
-        // Login failed, display error message or handle accordingly
+        // Login failed
         console.log('Login failed');
       }
     } catch (error) {

@@ -5,7 +5,7 @@ const AdminController = require('../controllers/AdminController');
 const checkRole = require('../middleware/checkRole');
 const validateToken = require('../middleware/validateToken')
 
-// Define admin routes
+//admin routes
 adminRouter.post('/register',validateToken,checkRole("ADMIN"),AdminController.registerUser);
 
 

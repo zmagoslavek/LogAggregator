@@ -5,7 +5,7 @@ const userRouter = express.Router();
 const userController = require('../controllers/UserController');
 const LogController = require('../controllers/LogController');
 const validateToken = require('../middleware/validateToken');
-// Define user routes
+// User routes
 userRouter.post('/add-project',validateToken,userController.addProject);
 
 userRouter.get('/projects/',validateToken,userController.getAllUserProjects);
